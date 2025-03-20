@@ -27,7 +27,7 @@ def main():
     parser.add_argument("--val_split", type=float, default=0.1, help="Validation split ratio")
     
     # Model arguments
-    parser.add_argument("--model_name", type=str, default="facebook/nllb-200-distilled-600M", 
+    parser.add_argument("--model_name", type=str, default="facebook/nllb-200-3.3B", 
                        help="Pretrained model name")
     parser.add_argument("--src_lang", type=str, default="hin_Deva", help="Source language code")
     parser.add_argument("--tgt_lang", type=str, default="hnd_Deva", help="Target language code")
