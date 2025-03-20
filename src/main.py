@@ -30,7 +30,7 @@ def main():
     parser.add_argument("--model_name", type=str, default="facebook/nllb-200-3.3B", 
                        help="Pretrained model name")
     parser.add_argument("--src_lang", type=str, default="hin_Deva", help="Source language code")
-    parser.add_argument("--tgt_lang", type=str, default="hnd_Deva", help="Target language code")
+    parser.add_argument("--tgt_lang", type=str, default="hne_Deva", help="Target language code")
     parser.add_argument("--teacher_model_path", type=str, help="Path to teacher model checkpoint")
     parser.add_argument("--checkpoint_path", type=str, help="Path to model checkpoint for evaluation")
     parser.add_argument("--num_layers", type=int, default=6, help="Number of layers to consider for RL actions")
