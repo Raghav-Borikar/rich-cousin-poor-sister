@@ -3,6 +3,7 @@ import os
 import argparse
 import logging
 import torch
+import tqdm
 from src.utils.logger import setup_logger
 from src.training.train_base_model import train_base_model
 from src.training.train_distillation import train_distillation
@@ -12,6 +13,7 @@ from src.preprocessing.tokenizer import MultilingualTokenizer
 from src.preprocessing.data_processor import load_parallel_data, create_dataloader
 from src.evaluation.evaluate_bleu import calculate_bleu
 from src.evaluation.evaluate_meteor import calculate_meteor
+import sys
 
 def main():
     parser = argparse.ArgumentParser(description="Hindi-Chhattisgarhi Cross-Lingual Transfer")
@@ -27,17 +29,17 @@ def main():
     parser.add_argument("--val_split", type=float, default=0.1, help="Validation split ratio")
     
     # Model arguments
-    parser.add_argument("--model_name", type=str, default="facebook/nllb-200-3.3B", 
-                       help="Pretrained model name")
+    parser.add_argument("--model_name", type=str, default="google-t5/t5-small", help="Pretrained model name")
+    parser.add_argument("--teacher_model_name", type=str, default="facebook/nllb-200-distilled-600M", help="Teacher Model")
     parser.add_argument("--src_lang", type=str, default="hin_Deva", help="Source language code")
     parser.add_argument("--tgt_lang", type=str, default="hne_Deva", help="Target language code")
     parser.add_argument("--teacher_model_path", type=str, help="Path to teacher model checkpoint")
     parser.add_argument("--checkpoint_path", type=str, help="Path to model checkpoint for evaluation")
     parser.add_argument("--num_layers", type=int, default=6, help="Number of layers to consider for RL actions")
-    
+
     # Training arguments
-    parser.add_argument("--batch_size", type=int, default=32, help="Batch size")
-    parser.add_argument("--learning_rate", type=float, default=5e-5, help="Learning rate")
+    parser.add_argument("--batch_size", type=int, default=8, help="Batch size")
+    parser.add_argument("--learning_rate", type=float, default=1e-4, help="Learning rate")
     parser.add_argument("--epochs", type=int, default=10, help="Number of training epochs")
     parser.add_argument("--max_length", type=int, default=128, help="Maximum sequence length")
     parser.add_argument("--max_grad_norm", type=float, default=1.0, help="Maximum gradient norm")
@@ -78,20 +80,20 @@ def main():
     
     if args.mode == "train_base":
         logger.info("Starting base model training")
-        train_base_model(args)
+        train_base_model(args, logger)
         
     elif args.mode == "train_distillation":
         logger.info("Starting knowledge distillation training")
-        if not args.teacher_model_path:
-            logger.error("Teacher model path is required for distillation")
-            return
+        #if not args.teacher_model_path:
+            #logger.error("Teacher model path is required for distillation")
+            #return
         train_distillation(args)
         
     elif args.mode == "train_rl":
         logger.info("Starting RL-guided transfer learning")
-        if not args.teacher_model_path:
-            logger.error("Teacher model path is required for RL-guided transfer")
-            return
+        #if not args.teacher_model_path:
+            #logger.error("Teacher model path is required for RL-guided transfer")
+            #return
         train_rl_transfer(args)
         
     elif args.mode == "evaluate":
@@ -102,7 +104,10 @@ def main():
         if not args.eval_data:
             logger.error("Evaluation data path is required")
             return
-            
+
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        logger.info(f"Using device: {device}")
+        
         # Load tokenizer
         tokenizer = MultilingualTokenizer(
             model_name=args.model_name,
@@ -110,12 +115,20 @@ def main():
             tgt_lang=args.tgt_lang
         )
         
-        # Load model
+        # **Load model checkpoint without Hugging Face:**
+        # When creating your model, use the same configuration as the checkpoint
         model = EncoderDecoderModel.from_pretrained(
-            args.checkpoint_path,
+            args.model_name,
             src_lang=args.src_lang,
-            tgt_lang=args.tgt_lang
+            tgt_lang=args.tgt_lang,
+            #vocab_size=250054  # Match the checkpoint's vocabulary size
         )
+
+        # First, load the checkpoint from your saved file
+        checkpoint = torch.load(args.checkpoint_path, weights_only=True)
+
+        # Then access the model_state_dict from the loaded checkpoint
+        model.load_state_dict(checkpoint['model_state_dict'])
         
         # Load evaluation data
         src_texts, tgt_texts = load_parallel_data(args.eval_data)
@@ -128,21 +141,20 @@ def main():
             max_length=args.max_length
         )
         
-        # Evaluate model
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        model.to(device)
-        model.eval()
-        
         all_references = []
         all_hypotheses = []
+
+
+        model.to(device)
         
         with torch.no_grad():
-            for batch in eval_dataloader:
+            eval_pbar = tqdm.tqdm(eval_dataloader, desc="Evaluating", unit="batch")
+            for batch in eval_pbar:
                 # Move tensors to device
                 input_ids = batch['input_ids'].to(device)
                 attention_mask = batch['attention_mask'].to(device)
                 labels = batch['labels'].to(device)
-                
+        
                 # Generate translations
                 generated_ids = model.generate(
                     input_ids=input_ids,
@@ -150,29 +162,34 @@ def main():
                     max_length=args.max_length,
                     num_beams=args.num_beams
                 )
-                
+        
                 # Decode outputs
                 for i in range(len(input_ids)):
                     reference = tokenizer.decode(labels[i])
                     hypothesis = tokenizer.decode(generated_ids[i])
-                    
+            
                     all_references.append([reference])
                     all_hypotheses.append(hypothesis)
         
+                # Update progress bar with current batch info
+                eval_pbar.set_postfix({"processed": len(all_hypotheses)})
+
         # Calculate metrics
+        logger.info("Calculating evaluation metrics...")
         bleu_score = calculate_bleu(all_references, all_hypotheses)
         meteor_score = calculate_meteor(all_references, all_hypotheses)
-        
+
         logger.info(f"Evaluation results: BLEU={bleu_score:.2f}, METEOR={meteor_score:.2f}")
-        
+
         # Save results
         with open(os.path.join(args.output_dir, "evaluation_results.txt"), "w") as f:
             f.write(f"BLEU: {bleu_score:.2f}\n")
             f.write(f"METEOR: {meteor_score:.2f}\n")
             f.write(f"Model: {args.checkpoint_path}\n")
             f.write(f"Evaluation data: {args.eval_data}\n")
-    
-    logger.info("Process completed successfully")
+            f.write(f"Total examples: {len(all_hypotheses)}\n")
+
+        logger.info("Process completed successfully")
 
 if __name__ == "__main__":
     main()
