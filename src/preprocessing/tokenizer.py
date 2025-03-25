@@ -17,8 +17,8 @@ class MultilingualTokenizer:
         self.model_name = model_name
         self.src_lang = src_lang
         self.tgt_lang = tgt_lang
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+     
     def encode_src(self, text, padding=True, truncation=True, max_length=128, return_tensors="pt"):
         """Encode source text (Hindi)"""
         return self.tokenizer(text, padding=padding, truncation=truncation, 
