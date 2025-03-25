@@ -1,7 +1,7 @@
 # src/models/base_model.py
 import torch
 import torch.nn as nn
-from transformers import AutoModelForSeq2SeqLM, AutoConfig
+from transformers import AutoModelForSeq2SeqLM, AutoConfig, EncoderDecoderCache
 
 class EncoderDecoderModel(nn.Module):
     """Base encoder-decoder model for Hindi-Chhattisgarhi transfer learning"""
@@ -21,9 +21,9 @@ class EncoderDecoderModel(nn.Module):
         self.tgt_lang = tgt_lang
         
         # Load configuration and model
-        self.config = AutoConfig.from_pretrained(model_name)
-        self.model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-        
+        self.config = AutoConfig.from_pretrained(model_name, trust_remote_code = True)
+        self.model = AutoModelForSeq2SeqLM.from_pretrained(model_name, trust_remote_code = True)
+
         # Set language codes for the model if supported
         if hasattr(self.model, "config") and hasattr(self.model.config, "forced_bos_token_id"):
             self.model.config.forced_bos_token_id = None
@@ -71,7 +71,7 @@ class EncoderDecoderModel(nn.Module):
         )
     
     def save_pretrained(self, output_dir):
-        """Save the model to a directory"""
+        """Save model to directory"""
         self.model.save_pretrained(output_dir)
     
     @classmethod
@@ -79,8 +79,8 @@ class EncoderDecoderModel(nn.Module):
         """Load a pretrained model from a directory"""
         instance = cls.__new__(cls)
         super(EncoderDecoderModel, instance).__init__()
+        instance.model = AutoModelForSeq2SeqLM.from_pretrained(model_path)   
+        instance.config = instance.model.config
         instance.src_lang = src_lang
         instance.tgt_lang = tgt_lang
-        instance.model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
-        instance.config = instance.model.config
         return instance
