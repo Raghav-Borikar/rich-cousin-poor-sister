@@ -5,6 +5,7 @@ import logging
 import torch
 import numpy as np
 import json
+import tqdm
 from datetime import datetime
 import matplotlib.pyplot as plt
 
@@ -80,7 +81,7 @@ def train_rl_transfer(args):
     
     # Load teacher model (Hindi)
     teacher_model = EncoderDecoderModel.from_pretrained(
-        args.teacher_model_path,
+        args.teacher_model_name,
         src_lang=args.src_lang,
         tgt_lang=args.tgt_lang
     ).to(device)
@@ -230,7 +231,8 @@ def parse_args():
     parser.add_argument("--val_split", type=float, default=0.1, help="Validation split ratio")
     
     # Model arguments
-    parser.add_argument("--model_name", type=str, default="facebook/nllb-200-distilled-600M", help="Base model name")
+    parser.add_argument("--model_name", type=str, default="google-t5/t5-small", help="Base model name")
+    parser.add_argument("--teacher_model_name", default="facebook/nllb-200-distilled-600M", help="Student model name")
     parser.add_argument("--src_lang", type=str, default="hin_Deva", help="Source language code")
     parser.add_argument("--tgt_lang", type=str, default="hnd_Deva", help="Target language code")
     parser.add_argument("--teacher_model_path", type=str, required=True, help="Path to teacher model checkpoint")
