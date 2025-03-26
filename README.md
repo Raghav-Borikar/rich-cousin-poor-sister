@@ -5,7 +5,7 @@
 - Raghav Borikar (M24DS010) - raghavbori@iitbhilai.ac.in
 - Vikrant Sahu (P24CS007) - vikrantsahu@iitbhilai.ac.in
 
-**Date:** March 15, 2025
+**Date:** March 26, 2025 (Last Update)
 
 ## 1. Project Overview
 This project focuses on developing a specialized framework that efficiently transfers knowledge from Hindi (a high-resource language) to Chhattisgarhi (a low-resource language) using reinforcement learning and knowledge distillation techniques. Our goal is to optimize core transfer learning mechanisms to achieve efficient cross-lingual transfer.
