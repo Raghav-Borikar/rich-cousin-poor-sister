@@ -72,9 +72,9 @@ python src.main --mode train_base
 ```
 ## Step 7: Run Evaluation 
 For evaluation: code will ask for a checkpoint path. download the most recent checkpoint from here, create a folder named checkpoints in the root directory & store the downloaded model checkpoint there, set the mode to evaluate and provide the path to the checkpoint. Also provide the relevant model & ensure that the checkpoint belongs to that model itself. else, run the script given below:
-    ```bash
-    python src.main --mode evaluate --model_name facebook/mbart-large-50 --checkpoint_path checkpoints/model_epoch1.pt
-    ```
+  ```bash
+  python src.main --mode evaluate --model_name facebook/mbart-large-50 --checkpoint_path checkpoints/model_epoch1.pt
+  ```
 
 ## Step 8: Checkpoint and Log Files
 After training or evaluation, the relevant checkpoints, logs, and results will be saved in their respective directories located in the root folder of the project.
