@@ -1,5 +1,5 @@
 # requirements.txt
-torch==2.1.0+cu126
+torch==2.6.0+cu126
 torchvision==0.15.0+cu126
 torchaudio==2.1.0+cu126
 transformers
