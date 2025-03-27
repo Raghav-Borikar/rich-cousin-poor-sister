@@ -24,8 +24,9 @@ def main():
                        help="Mode to run")
     
     # Data arguments
-    parser.add_argument("--train_data", type=str, help="Path to parallel corpus for training")
-    parser.add_argument("--eval_data", type=str, help="Path to evaluation data")
+    parser.add_argument("--train_data", type=str, default="data/processed/train.json", help="Path to parallel corpus for training")
+    parser.add_argument("--eval_data", type=str, default="data/processed/val.json", help="Path to evaluation data")
+    parser.add_argument("--test_data", type=str, default="data/processed/test.json", help="Path to test data")
     parser.add_argument("--val_split", type=float, default=0.1, help="Validation split ratio")
     
     # Model arguments
@@ -131,7 +132,7 @@ def main():
         model.load_state_dict(checkpoint['model_state_dict'])
         
         # Load evaluation data
-        src_texts, tgt_texts = load_parallel_data(args.eval_data)
+        src_texts, tgt_texts = load_parallel_data(args.test_data)
         
         # Create dataloader
         eval_dataloader = create_dataloader(
