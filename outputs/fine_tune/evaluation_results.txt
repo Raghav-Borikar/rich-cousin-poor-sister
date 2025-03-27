@@ -1,0 +1,5 @@
+BLEU: 25.64
+METEOR: 0.38
+Model: checkpoints/model_epoch_1.pt
+Evaluation data: data/processed/test.json
+Total examples: 8315
