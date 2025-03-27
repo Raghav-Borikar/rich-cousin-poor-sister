@@ -165,7 +165,7 @@ def train_base_model(args, logger):
             optimizer=optimizer,
             start_epoch=start_epoch+1,
             metrics={"train_loss": avg_train_loss, "val_loss": avg_val_loss},
-            filename=f"model_epoch_{start_epoch}.pt",
+            filename=f"ft_model_epoch_{start_epoch}.pt",
         )
 
         torch.cuda.empty_cache()
