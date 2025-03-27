@@ -68,7 +68,7 @@ You can run the project in four different modes. Below are the modes and the res
 ## Step 6: Choose a Mode and Run the Command
 Select the mode you wish to run and pass it as an argument when executing the script. For example, to train the base model, use the following command:
 ```bash
-python src.main --mode train_base
+python src.main --mode train_rl
 ```
 ## Step 7: Run Evaluation 
 For evaluation: code will ask for a checkpoint path. download the most recent checkpoint from here, create a folder named checkpoints in the root directory & store the downloaded model checkpoint there, set the mode to evaluate and provide the path to the checkpoint. Also provide the relevant model & ensure that the checkpoint belongs to that model itself. else, run the script given below:
