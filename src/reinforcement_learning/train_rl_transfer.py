@@ -158,12 +158,12 @@ def train_rl_transfer(args):
         }, f, indent=2)
     
     # Save training history
-    history_path = os.path.join(args.output_dir, "rl_transfer_history.json")
-    with open(history_path, 'w') as f:
-        json.dump(train_results["training_history"], f, indent=2)
+    #history_path = os.path.join(args.output_dir, "rl_transfer_history.json")
+    #with open(history_path, 'w') as f:
+        #json.dump(train_results["training_history"], f, indent=2)
     
     # Generate plots
-    plot_training_curves(train_results["training_history"], args.output_dir)
+    #plot_training_curves(train_results["training_history"], args.output_dir)
     
     logger.info(f"RL-guided transfer learning completed. Best results: BLEU={train_results['best_bleu']:.2f}, METEOR={train_results['best_meteor']:.2f}")
     logger.info(f"Results saved to {results_path}")
