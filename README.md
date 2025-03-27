@@ -47,33 +47,34 @@ You can run the project in four different modes. Below are the modes and the res
 
 - **Fine-tuning the base model**:
     ```bash
-    python src.main --mode train_base
+    python -m src.main --mode train_base
     ```
 
 - **Training the model using knowledge distillation**:
     ```bash
-    python src.main --mode train_distillation
+    python -m src.main --mode train_distillation
     ```
 
 - **Using reinforcement learning (RL) guided knowledge distillation**:
     ```bash
-    python src.main --mode train_rl
+    python -m src.main --mode train_rl
     ```
 
 - **Evaluation**:
     ```bash
-    python src.main --mode evaluate
+    python -m src.main --mode evaluate
     ```
+Note: You may change the config by defining the arguments on command line.
 
 ## Step 6: Choose a Mode and Run the Command
 Select the mode you wish to run and pass it as an argument when executing the script. For example, to train the base model, use the following command:
 ```bash
-python src.main --mode train_rl
+python -m src.main --mode train_base --train_data data/processed/train.json
 ```
 ## Step 7: Run Evaluation 
 For evaluation: code will ask for a checkpoint path. download the most recent checkpoint from here, create a folder named checkpoints in the root directory & store the downloaded model checkpoint there, set the mode to evaluate and provide the path to the checkpoint. Also provide the relevant model & ensure that the checkpoint belongs to that model itself. else, run the script given below:
   ```bash
-  python src.main --mode evaluate --model_name facebook/mbart-large-50 --checkpoint_path checkpoints/model_epoch1.pt
+  python -m src.main --mode evaluate --model_name facebook/mbart-large-50 --checkpoint_path checkpoints/model_epoch_1.pt
   ```
 
 ## Step 8: Checkpoint and Log Files
