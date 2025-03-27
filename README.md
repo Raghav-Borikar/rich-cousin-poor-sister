@@ -72,7 +72,7 @@ Select the mode you wish to run and pass it as an argument when executing the sc
 python -m src.main --mode train_base --train_data data/processed/train.json
 ```
 ## Step 7: Run Evaluation 
-For evaluation: code will ask for a checkpoint path. download the most recent checkpoint from here https://docs.google.com/spreadsheets/d/16LWjN2F41xUmQ0a1yeK9nY8m_wnuiFVyfUUT9vVVUy8/edit?usp=sharing, create a folder named checkpoints in the root directory & store the downloaded model checkpoint there, set the mode to evaluate and provide the path to the checkpoint. Also provide the relevant model & ensure that the checkpoint belongs to that model itself. else, run the script given below:
+For evaluation: code will ask for a checkpoint path. download the most recent checkpoint from here [https://drive.google.com/file/d/181WNX-74pk_tdb941rz4s5ryDsEmJSDu/view?usp=sharing], create a folder named checkpoints in the root directory & store the downloaded model checkpoint there, set the mode to evaluate and provide the path to the checkpoint. Also provide the relevant model & ensure that the checkpoint belongs to that model itself. else, run the script given below:
   ```bash
   python -m src.main --mode evaluate --model_name facebook/mbart-large-50 --checkpoint_path checkpoints/student_episode_1.pt
   ```
