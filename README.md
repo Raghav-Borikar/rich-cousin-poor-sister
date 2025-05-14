@@ -1,4 +1,5 @@
 # Rich Cousin Poor Sister
+
 # Hindi-Chhattisgarhi Cross-Lingual Transfer Using RL-Guided Distillation
 
 **Authors:**
@@ -89,5 +90,6 @@ Feel free to open an issue or submit a pull request if you'd like to contribute 
 ## 7. Contact
 For any inquiries, please contact:
 - Raghav Borikar: raghavbori@iitbhilai.ac.in
-- Vikrant Sahu: vikrantsahu@iitbhilai.ac.in
 
+=======
+Project Repo for Deep Learning for Low Resource NLP Course Project.
