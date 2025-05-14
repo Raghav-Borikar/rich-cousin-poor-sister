@@ -8,6 +8,8 @@ import logging
 import os
 from collections import deque
 import random
+from .rl_environment import TransferLearningEnv
+from .exploring_filtering import TransferCandidateExplorer, InformativeInstanceFilter, CurriculumLearningFilter
 
 logger = logging.getLogger(__name__)
 

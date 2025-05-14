@@ -62,7 +62,7 @@ def train_distillation(args):
     
     # Load teacher model (pretrained on Hindi)
     teacher_model = EncoderDecoderModel.from_pretrained(
-        args.teacher_model_path,
+        args.teacher_model_name,
         src_lang=args.src_lang,
         tgt_lang=args.tgt_lang
     ).to(device)
